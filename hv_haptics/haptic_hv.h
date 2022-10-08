@@ -753,23 +753,27 @@ int haptic_hv_i2c_writes(struct aw_haptic *aw_haptic, uint8_t reg_addr,
 
 static inline
 int haptic_hv_i2c_write_bits(struct aw_haptic *aw_haptic, uint8_t reg_addr,
-														  uint32_t mask,
-														  uint8_t reg_data)
+			     uint32_t mask, uint8_t reg_data)
 {
-	uint8_t reg_val = 0;
+	uint8_t oval = 0, nval = 0;
 	int ret = -1;
 
-	ret = haptic_hv_i2c_reads(aw_haptic, reg_addr, &reg_val, AW_I2C_BYTE_ONE);
+	ret = haptic_hv_i2c_reads(aw_haptic, reg_addr, &oval, AW_I2C_BYTE_ONE);
 	if (ret < 0) {
 		aw_err("i2c read error, ret=%d", ret);
 		return ret;
 	}
-	reg_val &= mask;
-	reg_val |= (reg_data & (~mask));
-	ret = haptic_hv_i2c_writes(aw_haptic, reg_addr, &reg_val, AW_I2C_BYTE_ONE);
-	if (ret < 0) {
-		aw_err("i2c write error, ret=%d", ret);
-		return ret;
+
+	nval = oval;
+	nval &= mask;
+	nval |= (reg_data & (~mask));
+
+	if (oval != nval) {
+		ret = haptic_hv_i2c_writes(aw_haptic, reg_addr, &nval, AW_I2C_BYTE_ONE);
+		if (ret < 0) {
+			aw_err("i2c write error, ret=%d", ret);
+			return ret;
+		}
 	}
 
 	return 0;
