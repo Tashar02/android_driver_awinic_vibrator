@@ -379,7 +379,7 @@ static void aw8692x_stop(struct aw_haptic *aw_haptic)
 
 	ret = aw8692x_wait_enter_standby(aw_haptic);
 	if (ret < 0) {
-		aw_err("force to enter standby mode!");
+		aw_dbg("force to enter standby mode!");
 		aw8692x_play_mode(aw_haptic, AW_STANDBY_MODE);
 	}
 }
@@ -706,7 +706,7 @@ static void aw8692x_interrupt_setup(struct aw_haptic *aw_haptic)
 	uint8_t reg_val = 0;
 
 	haptic_hv_i2c_reads(aw_haptic, AW8692X_REG_SYSINT, &reg_val, AW_I2C_BYTE_ONE);
-	aw_info("reg SYSINT=0x%02X", reg_val);
+	aw_dbg("reg SYSINT=0x%02X", reg_val);
 	/* edge int mode */
 	haptic_hv_i2c_write_bits(aw_haptic, AW8692X_REG_SYSCTRL4,
 				 (AW8692X_BIT_SYSCTRL4_INT_MODE_MASK &
@@ -881,7 +881,7 @@ static int aw8692x_read_f0(struct aw_haptic *aw_haptic)
 		return -ERANGE;
 	}
 	aw_haptic->f0 = (uint32_t)AW8692X_F0_FORMULA(f0_reg);
-	aw_info("lra_f0=%d", aw_haptic->f0);
+	aw_dbg("lra_f0=%d", aw_haptic->f0);
 #else
 	/* cont_f0 */
 	haptic_hv_i2c_reads(aw_haptic, AW8692X_REG_CONTCFG16, reg_val, AW_I2C_BYTE_TWO);
@@ -892,7 +892,7 @@ static int aw8692x_read_f0(struct aw_haptic *aw_haptic)
 		return -ERANGE;
 	}
 	aw_haptic->f0 = (uint32_t)AW8692X_F0_FORMULA(f0_reg);
-	aw_info("cont_f0=%d", aw_haptic->f0);
+	aw_dbg("cont_f0=%d", aw_haptic->f0);
 #endif
 
 	return 0;
@@ -1295,7 +1295,7 @@ static int aw8692x_container_update(struct aw_haptic *aw_haptic,
 		i += len;
 	}
 	if (ret)
-		aw_err("ram data check sum error");
+		aw_dbg("ram data check sum error");
 	else
 		aw_dbg("ram data check sum pass");
 #endif
