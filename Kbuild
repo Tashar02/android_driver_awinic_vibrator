@@ -38,22 +38,22 @@ endif
 ifeq ($(CONFIG_AWINIC_HV_HAPTICS), y)
 	LINUX_INC += -include $(VIBRATOR_ROOT)/hv_haptics/haptic_hv.h
 
-	awinic_haptic-y := ./hv_haptics/haptic_hv.o
+	awinic_haptic-y := hv_haptics/haptic_hv.o
 
 	ifeq ($(CONFIG_AW869X_DRIVER_ENABLE), y)
-		awinic_haptic-y += ./hv_haptics/aw869x.o
+		awinic_haptic-y += hv_haptics/aw869x.o
 	endif
 	ifeq ($(CONFIG_AW869XX_DRIVER_ENABLE), y)
-		awinic_haptic-y += ./hv_haptics/aw869xx.o
+		awinic_haptic-y += hv_haptics/aw869xx.o
 	endif
 	ifeq ($(CONFIG_AW8691X_DRIVER_ENABLE), y)
-		awinic_haptic-y += ./hv_haptics/aw8671x.o
+		awinic_haptic-y += hv_haptics/aw8671x.o
 	endif
 	ifeq ($(CONFIG_AW8692X_DRIVER_ENABLE), y)
-		awinic_haptic-y += ./hv_haptics/aw8692x.o
+		awinic_haptic-y += hv_haptics/aw8692x.o
 	endif
 	ifeq ($(CONFIG_AW8693X_DRIVER_ENABLE), y)
-		awinic_haptic-y += ./hv_haptics/aw8693x.o
+		awinic_haptic-y += hv_haptics/aw8693x.o
 	endif
 
 	obj-$(CONFIG_AWINIC_VIBRATOR) += awinic_haptic.o
