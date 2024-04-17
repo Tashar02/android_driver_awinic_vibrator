@@ -7,7 +7,6 @@
  * Author: Ethan <renzhiqiang@awinic.com>
  */
 
-#include "haptic_hv_reg.h"
 #include "haptic_hv.h"
 
 static void aw869x_vbat_mode_config(struct aw_haptic *, uint8_t);

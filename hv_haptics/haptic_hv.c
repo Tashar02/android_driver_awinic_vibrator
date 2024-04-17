@@ -14,7 +14,6 @@
 #include <linux/mman.h>
 
 #include "haptic_hv.h"
-#include "haptic_hv_reg.h"
 
 #define HAPTIC_HV_DRIVER_VERSION	"v1.7.0"
 
