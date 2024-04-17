@@ -540,6 +540,7 @@ struct aw_haptic {
 	uint8_t trim_lra_boundary;
 
 	int vmax;
+	int custom_gain;
 	int gain;
 	int rate;
 	int width;
