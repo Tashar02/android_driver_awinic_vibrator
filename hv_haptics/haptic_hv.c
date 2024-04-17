@@ -2902,7 +2902,7 @@ static int aw_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
 	struct device_node *np = i2c->dev.of_node;
 
 	if (!i2c_check_functionality(i2c->adapter, I2C_FUNC_I2C)) {
-		pr_err("<%s>%s: check_functionality failed\n", AW_I2C_NAME, __func__);
+		aw_err("<%s>%s: check_functionality failed\n", AW_I2C_NAME, __func__);
 		return -EIO;
 	}
 
@@ -3146,10 +3146,10 @@ static int __init aw_i2c_init(void)
 {
 	int ret = 0;
 
-	pr_info("%s: aw_haptic driver version %s\n", AW_I2C_NAME, HAPTIC_HV_DRIVER_VERSION);
+	aw_info("%s: aw_haptic driver version %s\n", AW_I2C_NAME, HAPTIC_HV_DRIVER_VERSION);
 	ret = i2c_add_driver(&aw_i2c_driver);
 	if (ret) {
-		pr_err("<%s>%s: fail to add aw_haptic device into i2c\n", AW_I2C_NAME, __func__);
+		aw_err("<%s>%s: fail to add aw_haptic device into i2c\n", AW_I2C_NAME, __func__);
 		return ret;
 	}
 
