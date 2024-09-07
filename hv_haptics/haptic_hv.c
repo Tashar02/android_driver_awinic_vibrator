@@ -620,6 +620,7 @@ static int ram_f0_cali(struct aw_haptic *aw_haptic)
 
 static void pm_qos_enable(struct aw_haptic *aw_haptic, bool enable)
 {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
 	if (enable) {
 		if (!cpu_latency_qos_request_active(&aw_haptic->aw_pm_qos_req_vb))
 			cpu_latency_qos_add_request(&aw_haptic->aw_pm_qos_req_vb,
@@ -628,6 +629,17 @@ static void pm_qos_enable(struct aw_haptic *aw_haptic, bool enable)
 		if (cpu_latency_qos_request_active(&aw_haptic->aw_pm_qos_req_vb))
 			cpu_latency_qos_remove_request(&aw_haptic->aw_pm_qos_req_vb);
 	}
+#else
+	if (enable) {
+		if (!pm_qos_request_active(&aw_haptic->aw_pm_qos_req_vb))
+			pm_qos_add_request(&aw_haptic->aw_pm_qos_req_vb,
+					   PM_QOS_CPU_DMA_LATENCY,
+					   AW_PM_QOS_VALUE_VB);
+	} else {
+		if (pm_qos_request_active(&aw_haptic->aw_pm_qos_req_vb))
+			pm_qos_remove_request(&aw_haptic->aw_pm_qos_req_vb);
+	}
+#endif
 }
 
 static int rtp_osc_cali(struct aw_haptic *aw_haptic)
