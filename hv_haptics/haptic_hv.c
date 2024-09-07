@@ -927,8 +927,8 @@ static int input_upload_effect(struct input_dev *dev, struct ff_effect *effect,
 			} else {
 				aw_haptic->activate_mode = AW_STANDBY_MODE;
 				aw_err("waveform id is error");
-				mutex_unlock(&aw_haptic->lock);
-				return -ERANGE;
+				ret = -ERANGE;
+				goto out;
 			}
 		}
 		aw_dbg("waveform id = %d", wav_id);
