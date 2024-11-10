@@ -65,29 +65,6 @@ static int parse_dt(struct device *dev, struct aw_haptic *aw_haptic, struct devi
 	if (val != 0)
 		aw_info("f0_pre not found");
 
-	aw_haptic->support_predef = of_property_read_bool(np, "awinic,support_predefined_pattern");
-	if (aw_haptic->support_predef) {
-		tmp = of_get_available_child_count(np);
-		aw_haptic->effect_max = tmp;
-		aw_haptic->predefined = devm_kcalloc(aw_haptic->dev, tmp,
-					sizeof(*aw_haptic->predefined), GFP_KERNEL);
-		if (!aw_haptic->predefined)
-			return -ENOMEM;
-
-		for_each_available_child_of_node(np, child_node) {
-			effect = &aw_haptic->predefined[i++];
-			val = of_property_read_u32(child_node, "awinic,effect-id", &effect->id);
-			if (val)
-				aw_dbg("Read qcom,effect-id failed");
-
-			val = of_property_read_u32(child_node, "awinic,wf-play-rate-us", &tmp);
-			if (val != 0)
-				aw_dbg("%s  Read qcom,wf-vmax-mv failed !\n", __func__);
-
-			effect->play_rate_us = tmp ? tmp : 0;
-		}
-	}
-
 #ifdef AW_DOUBLE
 	if (of_device_is_compatible(np, "awinic,haptic_hv_l")) {
 		aw_info("compatible left vibrator.");
@@ -104,6 +81,30 @@ static int parse_dt(struct device *dev, struct aw_haptic *aw_haptic, struct devi
 		return -ERANGE;
 	}
 #endif
+
+	tmp = of_get_available_child_count(np);
+	if (!tmp)
+		return 0;
+
+	aw_haptic->effect_max = tmp;
+
+	aw_haptic->predefined = devm_kcalloc(aw_haptic->dev, tmp,
+					sizeof(*aw_haptic->predefined), GFP_KERNEL);
+	if (!aw_haptic->predefined)
+		return -ENOMEM;
+
+	for_each_available_child_of_node(np, child_node) {
+		effect = &aw_haptic->predefined[i++];
+		val = of_property_read_u32(child_node, "awinic,effect-id", &effect->id);
+		if (val)
+			aw_dbg("Read qcom,effect-id failed");
+
+		val = of_property_read_u32(child_node, "awinic,wf-play-rate-us", &tmp);
+		if (val != 0)
+			aw_dbg("%s  Read qcom,wf-vmax-mv failed !\n", __func__);
+
+		effect->play_rate_us = tmp ? tmp : 0;
+	}
 
 	return 0;
 }
@@ -876,7 +877,12 @@ static int input_upload_effect(struct input_dev *dev, struct ff_effect *effect,
 		aw_dbg("waveform id = %d", aw_haptic->index);
 		break;
 	case FF_PERIODIC:
-		if (aw_haptic->support_predef) {
+		if (effect->u.periodic.waveform != FF_CUSTOM) {
+			aw_err("Only support custom waveforms\n");
+			return -EINVAL;
+		}
+
+		if (effect->u.periodic.custom_len == sizeof(custom_data)) {
 			ret = copy_from_user(custom_data, effect->u.periodic.custom_data, sizeof(custom_data));
 			if (ret) {
 				aw_err("copy from user error %d!!", ret);
@@ -1006,7 +1012,7 @@ static int input_framework_init(struct aw_haptic *aw_haptic)
 	input_set_capability(input_dev, EV_FF, FF_PERIODIC);
 	input_set_capability(input_dev, EV_FF, FF_CUSTOM);
 
-	if (aw_haptic->effect_max && aw_haptic->support_predef)
+	if (aw_haptic->effect_max)
 		max_effect_count = aw_haptic->effect_max;
 
 	ret = input_ff_create(input_dev, max_effect_count);

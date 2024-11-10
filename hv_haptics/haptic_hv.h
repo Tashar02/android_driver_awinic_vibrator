@@ -523,7 +523,6 @@ struct aw_haptic {
 	bool rtp_init;
 	bool ram_init;
 	bool dual_flag;
-	bool support_predef;
 
 	/* COMMON */
 	uint8_t flags;
